@@ -75,8 +75,8 @@ class Step:
 
     def __str__(self):
         if self.count == 0:
-            return '{}#{} {}'.format(os.path.basename(self.path),  self.line_no, self.name)
-        return '{:03} {}'.format(self.count, self.name)
+            return '{}#{} {}'.format(os.path.basename(self.path), self.line_no, self.name)
+        return '{:04}: {}'.format(self.count, self.name)
 
     def __repr__(self):
         return ' '.join([self.action, self.name])
@@ -140,7 +140,7 @@ def find_step_defs(directory) -> Steps:
     which are parsed for step definitions
     :rtype : Steps
     """
-    rgx = re.compile('@?(?P<action>(Given|When|Then|And|But))\((?P<step>".*?")\).*')
+    rgx = re.compile(r'@?(?P<action>(Given|When|Then|And|But))\((?P<step>".*?")\).*')
     new_steps = Steps()
     for path, dirs, files in os.walk(os.path.abspath(directory)):
         for filename in files:
@@ -152,5 +152,3 @@ def find_step_defs(directory) -> Steps:
                         if matching:
                             new_steps.append(Step(matching.group('action'), matching.group('step'), lineno, fp))
     return new_steps
-
-

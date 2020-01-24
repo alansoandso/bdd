@@ -1,6 +1,15 @@
-from distutils.core import setup
+from glob import glob
+from os.path import basename
+from os.path import splitext
 
-install_requires = ['behave']
+from setuptools import find_packages
+from setuptools import setup
+
+install_requires = [
+    'behave',
+    'pytest',
+    'pytest-cov'
+]
 
 setup(
     name='bdd',

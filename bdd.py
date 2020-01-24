@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-from bdd import steps
-from bdd import purge
+import steps
+import purge
 
 
 def main():
@@ -14,9 +14,9 @@ def main():
     else:
         p = '.'
 
-    # p = '/Users/alan/workspace/qa-cucumber-jvm/src/test'
+    p = '/Users/alan/workspace/popcorn-qa-cucumber-jvm/src/test'
     # p = '/Users/alan/workspace/plutus-partner-accounts/partner-accounts-test/src/test'
-    p = '/Users/alan/workspace/umc-integration-tests/src'
+    # p = '/Users/alan/workspace/umc-integration-tests/src'
 
     step_defs = steps.find_step_defs(p)
     steps.find_features(p, step_defs)
