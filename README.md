@@ -24,6 +24,7 @@ pip install -e .
 
 py.test -vs
 ```
+For intellij to enable execute test from editor with icon, set: default test runner to pytest
 
 **Testing**
 

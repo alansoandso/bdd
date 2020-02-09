@@ -8,7 +8,8 @@ from setuptools import setup
 install_requires = [
     'behave',
     'pytest',
-    'pytest-cov'
+    'pytest-cov',
+    'pytest-bdd'
 ]
 
 setup(
@@ -17,7 +18,10 @@ setup(
     description='BDD usage report',
     author='Alan So',
     author_email='alansoandso@gmail.com',
-    packages=[''],
-    scripts=['bdd'],
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
+    include_package_data=True,
+    entry_points={'console_scripts': ['bdd = tool.bdd:command_line_runner', ]},
     install_requires=install_requires
 )
