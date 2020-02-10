@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import abc
 import collections
 import fnmatch
 import logging
 import os
 import re
 from contextlib import suppress
-from behave import parser
+import behave
+from behave.parser import ParserError
 from behave.model import Scenario
 from typing import Iterator
 from tool.step import Step
@@ -15,7 +17,10 @@ from tool.step import Step
 logging.basicConfig(format='%(message)s')
 
 
-class Steps:
+class Steps(object):
+    """Abstract Base Class Definition"""
+    __metaclass__ = abc.ABCMeta
+
     def __init__(self):
         self.steps = []
         self.actions = collections.defaultdict(int)
@@ -72,17 +77,47 @@ class Steps:
         for line_nbr in [s.line_no for s in self.steps if s.path == path and s.count == 0]:
             yield line_nbr
 
+    def parse_feature(self, lines):
+        """ Update the steps usage count for each matching line
+        """
+        for line in lines:
+            line = line.strip()
+            for step in self.items():
+                if step.tally(line):
+                    break
+            else:
+                logging.warning(f'Missing step for: {line}')
+
+    @abc.abstractmethod
+    def find_features(self, directory):
+        """Recurse from a directory downwards for feature files
+            Ignoring anything tagged with @pending, tally up the usage step counts
+        """
+
+    @abc.abstractmethod
+    def find_step_definitions(self, directory):
+        """Recurse from directory downwards for matching step files,
+            which are parsed for step definitions
+        """
+
+    @abc.abstractmethod
+    def parse_steps(self, file_path):
+        """parse for annotated steps e.g. @given(...)
+        """
+
+
+class BehaveSteps(Steps):
     def find_features(self, directory):
         """ Recurse from a directory downwards for feature files
-        Ignoring anything tagged with @pending, tally up the usage steo counts
+            Ignoring anything tagged with @pending, tally up the usage step counts
         """
         for path, dirs, files in os.walk(os.path.abspath(directory)):
             for filename in fnmatch.filter(files, '*feature'):
                 fp = os.path.join(path, filename)
                 feature_file = ''.join(open(fp).readlines())
                 lines = []
-                with suppress(parser.ParserError):
-                    feature = parser.parse_feature(feature_file, filename=filename)
+                with suppress(ParserError):
+                    feature = behave.parser.parse_feature(feature_file, filename=filename)
                     if not feature:
                         break
                     logging.debug(f'{fp}')
@@ -98,20 +133,9 @@ class Steps:
 
                     self.parse_feature(lines)
 
-    def parse_feature(self, lines):
-        """ Update the steps usage count for each matching line
-        """
-        for line in lines:
-            line = line.strip()
-            for step in self.items():
-                if step.tally(line):
-                    break
-            else:
-                logging.warning(f'Missing step for: {line}')
-
     def find_step_definitions(self, directory):
         """Recurse from directory downwards for matching step files,
-        which are parsed for step definitions
+            which are parsed for step definitions
         """
         # rgx = re.compile(r'@?(?P<action>(Given|When|Then|And|But))\((?P<step>".*?")\).*')
         rgx = re.compile(r'@?(?P<action>([Gg]iven|[Ww]hen|[Tt]hen|[Aa]nd|[Bb]ut))\((?P<step>["\'].*?["\'])\).*')
@@ -124,3 +148,18 @@ class Steps:
                             matching = rgx.fullmatch(line.strip())
                             if matching:
                                 self.append(Step(matching.group('action'), matching.group('step'), line_nbr, fp))
+
+    def parse_steps(self, file_path):
+        """parse for steps e.g.:
+            @Then("^number of viewed content is (?:within limits|less than )(.*)$")
+            @given(parsers.parse('I playout "{asset}"'), target_fixture='cli')
+            @then('the result page will include "{text}"')
+        """
+        rgx = re.compile(r'@?(?P<action>([Gg]iven|[Ww]hen|[Tt]hen|[Aa]nd|[Bb]ut))'
+                         r'\((?P<step>["\'].*?["\'])\).*')
+        with open(file_path) as f:
+            for line_nbr, line in enumerate(f):
+                matching = rgx.fullmatch(line.strip())
+                if matching:
+                    self.append(Step(matching.group('action'), matching.group('step'), line_nbr, file_path))
+

@@ -4,7 +4,8 @@ import argparse
 import logging
 import sys
 
-from tool.steps import Steps
+from tool.cucumbers import Cucumbers
+from tool.steps import BehaveSteps
 
 logging.basicConfig(format='%(name)s: %(message)s', level=logging.DEBUG)
 logging.getLogger(__name__)
@@ -37,7 +38,9 @@ def command_line_runner(argv=None):
     args = parser.parse_args(argv[1:])
     logging.debug(args)
 
-    steps = Steps()
+    cucumbers = Cucumbers(args.directory)
+
+    steps = BehaveSteps()
     steps.find_step_definitions(args.directory)
     steps.find_features(args.directory)
     print(steps.report())
