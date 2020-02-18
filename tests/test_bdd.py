@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from tool import bdd
+from bdd_tools import bdd
 import logging
 LOG = logging.getLogger(__name__)
 

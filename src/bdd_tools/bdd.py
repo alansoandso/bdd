@@ -4,8 +4,7 @@ import argparse
 import logging
 import sys
 
-from tool.cucumbers import Cucumbers
-from tool.steps import BehaveSteps
+from bdd_tools.cucumbers import Cucumbers
 
 logging.basicConfig(format='%(name)s: %(message)s', level=logging.DEBUG)
 logging.getLogger(__name__)
@@ -39,12 +38,12 @@ def command_line_runner(argv=None):
     logging.debug(args)
 
     cucumbers = Cucumbers(args.directory)
-
-    steps = BehaveSteps()
-    steps.find_step_definitions(args.directory)
-    steps.find_features(args.directory)
-    print(steps.report())
-    print(steps)
+    cucumbers.map_steps()
+    cucumbers.step_usage()
+    print('*'*50)
+    print(cucumbers.steps)
+    print('*'*50)
+    print(cucumbers.steps.report())
 
 
 if __name__ == '__main__':

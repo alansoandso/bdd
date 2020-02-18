@@ -3,21 +3,24 @@ import os
 import re
 
 logging.basicConfig(format='%(message)s')
+LOG = logging.getLogger(__name__)
 
 
 class Step:
     def __init__(self, action, name, line_nbr, path):
         self.count = 0
-        self.action = action
+        self.action = action.capitalize()
         self.path = path
         self.line_no = line_nbr
-        # lose the \\d+
-        name = name.replace('\\"', '"')
-        name = name.replace('\\\\', '\\')
-        # lose "^<- these bits -->:$"
-        # e.g. '"^error code (\\d+) with:$"' to 'error code (\d+) with'
-        self.name = name.strip('"').lstrip('^').rstrip('$').rstrip(':')
-        self.rgx = re.compile(self.name)
+        name = name.replace('\\\\', '\\').replace('\\"', '"')
+        name = name.lstrip('^').rstrip('$').rstrip(':')
+        self.name = name
+
+        try:
+            pattern = re.sub('[{<].*[}>]', '.*', name)
+            self.rgx = re.compile(pattern)
+        except re.error:
+            logging.error(f'Error on: {name}')
 
     def __str__(self):
         return f'{self.count:04}: {self.name:150s}{os.path.basename(self.path)}#{self.line_no}'
