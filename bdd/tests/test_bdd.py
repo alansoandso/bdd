@@ -21,7 +21,7 @@ def test_cli(capsys):
     assert 'Steps by type:' in out
 
 
-@patch('sys.argv', ['bdd', '--directory', '/Users/alan/Dropbox/python/python3/playable/tests', '-c'])
+@patch('sys.argv', ['bdd', '--directory', '/Users/alan/Dropbox/python/python3/playable/playable/tests', '-c'])
 def test_cli_directory(capsys):
     """Test command_line_runner with a parameter"""
     tool.command_line_runner()
