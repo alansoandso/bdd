@@ -1,7 +1,7 @@
 import logging
 import os
 import re
-from bdd_tools.steps import Steps
+from bdd.steps import Steps
 
 logging.basicConfig(format='%(message)s')
 

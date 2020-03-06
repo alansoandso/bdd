@@ -4,7 +4,7 @@ import argparse
 import logging
 import sys
 
-from bdd_tools.cucumbers import Cucumbers
+from bdd.cucumbers import Cucumbers
 
 logging.basicConfig(format='%(name)s: %(message)s', level=logging.DEBUG)
 logging.getLogger(__name__)

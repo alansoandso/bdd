@@ -9,7 +9,7 @@ import behave
 from behave.parser import ParserError
 from behave.model import Scenario
 from typing import Iterator
-from bdd_tools.step import Step
+from bdd.step import Step
 
 
 logging.basicConfig(format='%(message)s')

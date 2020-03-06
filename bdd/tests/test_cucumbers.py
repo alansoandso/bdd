@@ -2,7 +2,7 @@ import logging
 import os
 import re
 from unittest.mock import patch
-from bdd_tools.cucumbers import Cucumbers
+from bdd.cucumbers import Cucumbers
 from pprint import pformat
 
 LOG = logging.getLogger(__name__)

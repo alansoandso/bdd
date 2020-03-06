@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from bdd_tools import bdd
+from bdd import tool
 import logging
 LOG = logging.getLogger(__name__)
 
@@ -7,7 +7,7 @@ LOG = logging.getLogger(__name__)
 @patch('sys.argv', ['bdd'])
 def test_cli_usage(capsys):
     """Test if command_line_runner shows help when called without parameters."""
-    bdd.command_line_runner()
+    tool.command_line_runner()
     out, err = capsys.readouterr()
     assert 'usage: bdd [-h]' in out
 
@@ -15,7 +15,7 @@ def test_cli_usage(capsys):
 @patch('sys.argv', ['bdd', '-c'])
 def test_cli(capsys):
     """Test command_line_runner with a parameter"""
-    bdd.command_line_runner()
+    tool.command_line_runner()
     out, err = capsys.readouterr()
     LOG.info(out)
     assert 'Steps by type:' in out
@@ -24,7 +24,7 @@ def test_cli(capsys):
 @patch('sys.argv', ['bdd', '--directory', '/Users/alan/Dropbox/python/python3/playable/tests', '-c'])
 def test_cli_directory(capsys):
     """Test command_line_runner with a parameter"""
-    bdd.command_line_runner()
+    tool.command_line_runner()
     out, err = capsys.readouterr()
     LOG.info(out)
 

@@ -19,7 +19,7 @@ bdd --unused
 **Development**
 
 ```
-pyenv local tools3.8
+pyenv local tools3 3.6.0
 pip install -e .
 
 py.test -vs
@@ -31,6 +31,8 @@ For intellij to enable execute test from editor with icon, set: default test run
 ```
 py.test -vs
 # OR:
-py.test --cov-report html --cov tool.bdd
+py.test --cov-report html --cov bdd.tests
 open htmlcov/index.html
+# OR:
+tox
 ```
